@@ -1,11 +1,12 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import React from "react";
 import ThemeSwitcher from "./ThemeSwitcher/ThemeSwitcher";
 import Search from "./Search/Search";
+import { useGlobalContext } from "../context/globalContext";
 
 const Navbar = () => {
+  const { state } = useGlobalContext();
   return (
     <div className='w-full flex items-center justify-between py-4'>
       <div className='left'></div>
