@@ -3,20 +3,28 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(req: NextRequest | Request) {
   try {
     const apiKey = process.env.NEXT_OPENWEATHER;
-    const lat = 37.5519;
-    const lon = 126.9918;
+    const nextReq = req as NextRequest;
 
-    const dailyUrl = `http://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}`;
+    if ("nextUrl" in nextReq) {
+      const searchParams = nextReq.nextUrl.searchParams;
 
-    const dailyRes = await fetch(dailyUrl, {
-      next: { revalidate: 3600 },
-    });
+      const lat = searchParams.get("lat");
+      const lon = searchParams.get("lon");
 
-    const dailyData = await dailyRes.json();
+      const dailyUrl = `http://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}`;
 
-    return NextResponse.json(dailyData);
+      const dailyRes = await fetch(dailyUrl, {
+        next: { revalidate: 3600 },
+      });
+
+      const dailyData = await dailyRes.json();
+
+      return NextResponse.json(dailyData);
+    } else {
+      throw new Error("Expected NextRequest but received Request");
+    }
   } catch (error) {
-    console.log("Error in getting daily data ");
+    console.log("Error in getting daily data ", error);
     return new Response("Error in getting daily data ", { status: 500 });
   }
 }

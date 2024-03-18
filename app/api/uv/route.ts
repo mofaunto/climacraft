@@ -2,8 +2,12 @@ import { NextResponse, NextRequest } from "next/server";
 
 export async function GET(req: NextRequest | Request) {
   try {
-    const lat = 37.5519;
-    const lon = 126.9918;
+    // Type assertion to inform TypeScript that req is always a NextRequest
+    const nextReq = req as NextRequest;
+
+    const searchParams = nextReq.nextUrl.searchParams;
+    const lat = searchParams.get("lat");
+    const lon = searchParams.get("lon");
 
     const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=uv_index_max,uv_index_clear_sky_max&timezone=auto&forecast_days=1`;
 

@@ -4,16 +4,26 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(req: NextRequest | Request) {
   try {
     const apiKey = process.env.NEXT_OPENWEATHER;
-    const lat = 37.5519;
-    const lon = 126.9918;
 
-    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}`;
+    // Type assertion to narrow down the type to NextRequest
+    const nextReq = req as NextRequest;
 
-    const res = await axios.get(url);
+    // Check if req is a NextRequest
+    if ("nextUrl" in nextReq) {
+      const searchParams = nextReq.nextUrl.searchParams;
+      const lat = searchParams.get("lat");
+      const lon = searchParams.get("lon");
 
-    return NextResponse.json(res.data);
+      const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}`;
+
+      const res = await axios.get(url);
+
+      return NextResponse.json(res.data);
+    } else {
+      throw new Error("Expected NextRequest but received Request");
+    }
   } catch (error) {
-    console.log("Error fetching forecast data");
+    console.log("Error fetching forecast data:", error);
     return new Response("Error fetching forecast data", { status: 500 });
   }
 }
