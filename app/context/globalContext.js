@@ -8,6 +8,7 @@ const GlobalContextUpdate = createContext();
 export const GlobalContextProvider = ({ children }) => {
   const [forecast, setForecast] = useState({});
   const [airQuality, setAirQuality] = useState({});
+  const [uvIndex, seUvIndex] = useState({});
 
   // Get temperature data
   const fetchForecast = async () => {
@@ -30,9 +31,21 @@ export const GlobalContextProvider = ({ children }) => {
     }
   };
 
+  // Get UV data
+  const fetchUVIndex = async () => {
+    try {
+      const res = await axios.get("/api/uv");
+
+      seUvIndex(res.data);
+    } catch (error) {
+      console.error("Error fetching the forecast:", error);
+    }
+  };
+
   useEffect(() => {
     fetchForecast();
     fetchAirQuality();
+    fetchUVIndex();
   }, []);
 
   return (
@@ -40,6 +53,7 @@ export const GlobalContextProvider = ({ children }) => {
       value={{
         forecast,
         airQuality,
+        uvIndex,
       }}
     >
       <GlobalContextUpdate.Provider>{children}</GlobalContextUpdate.Provider>
