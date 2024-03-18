@@ -9,7 +9,7 @@ import {
   rain,
   snow,
 } from "@/app/utils/Iconcollection";
-import { kelvinToCelsius } from "@/app/utils/TempConversion";
+import { kelvinToCelsius } from "@/app/utils/ForecastFunctions";
 import moment from "moment-timezone";
 
 function Temperature() {
