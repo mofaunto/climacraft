@@ -5,12 +5,25 @@ export async function GET(req: NextRequest | Request) {
   try {
     const apiKey = process.env.NEXT_OPENWEATHER;
 
-    // Type assertion to inform TypeScript that req is always a NextRequest
     const nextReq = req as NextRequest;
 
-    const searchParams = nextReq.nextUrl.searchParams;
-    const lat = searchParams.get("lat");
-    const lon = searchParams.get("lon");
+    let lat = "";
+    let lon = "";
+    if (nextReq instanceof NextRequest) {
+      const searchParams = nextReq.nextUrl.searchParams;
+      lat = searchParams.get("lat") || "";
+      lon = searchParams.get("lon") || "";
+    } else {
+      const queryParams = new URLSearchParams(
+        (nextReq as Request).url.split("?")[1]
+      );
+      lat = queryParams.get("lat") || "";
+      lon = queryParams.get("lon") || "";
+    }
+
+    if (!lat || !lon) {
+      throw new Error("Latitude or longitude not provided in query parameters");
+    }
 
     const url = `http://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${apiKey}`;
 
@@ -18,7 +31,7 @@ export async function GET(req: NextRequest | Request) {
 
     return NextResponse.json(res.data);
   } catch (error) {
-    console.log("Error in getting pollution data");
+    console.log("Error in getting pollution data:", error);
     return new Response("Error fetching pollution data", { status: 500 });
   }
 }

@@ -6,10 +6,25 @@ export async function GET(req: NextRequest | Request) {
     const nextReq = req as NextRequest;
 
     if ("nextUrl" in nextReq) {
-      const searchParams = nextReq.nextUrl.searchParams;
+      let lat = "";
+      let lon = "";
+      if (nextReq instanceof NextRequest) {
+        const searchParams = nextReq.nextUrl.searchParams;
+        lat = searchParams.get("lat") || "";
+        lon = searchParams.get("lon") || "";
+      } else {
+        const queryParams = new URLSearchParams(
+          (nextReq as Request).url.split("?")[1]
+        );
+        lat = queryParams.get("lat") || "";
+        lon = queryParams.get("lon") || "";
+      }
 
-      const lat = searchParams.get("lat");
-      const lon = searchParams.get("lon");
+      if (!lat || !lon) {
+        throw new Error(
+          "Latitude or longitude not provided in query parameters"
+        );
+      }
 
       const dailyUrl = `http://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}`;
 
@@ -24,7 +39,7 @@ export async function GET(req: NextRequest | Request) {
       throw new Error("Expected NextRequest but received Request");
     }
   } catch (error) {
-    console.log("Error in getting daily data ", error);
-    return new Response("Error in getting daily data ", { status: 500 });
+    console.log("Error in getting daily data:", error);
+    return new Response("Error in getting daily data", { status: 500 });
   }
 }

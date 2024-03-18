@@ -5,23 +5,31 @@ export async function GET(req: NextRequest | Request) {
   try {
     const apiKey = process.env.NEXT_OPENWEATHER;
 
-    // Type assertion to narrow down the type to NextRequest
     const nextReq = req as NextRequest;
 
-    // Check if req is a NextRequest
-    if ("nextUrl" in nextReq) {
+    let lat = "";
+    let lon = "";
+    if (nextReq instanceof NextRequest) {
       const searchParams = nextReq.nextUrl.searchParams;
-      const lat = searchParams.get("lat");
-      const lon = searchParams.get("lon");
-
-      const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}`;
-
-      const res = await axios.get(url);
-
-      return NextResponse.json(res.data);
+      lat = searchParams.get("lat") || "";
+      lon = searchParams.get("lon") || "";
     } else {
-      throw new Error("Expected NextRequest but received Request");
+      const queryParams = new URLSearchParams(
+        (nextReq as Request).url.split("?")[1]
+      );
+      lat = queryParams.get("lat") || "";
+      lon = queryParams.get("lon") || "";
     }
+
+    if (!lat || !lon) {
+      throw new Error("Latitude or longitude not provided in query parameters");
+    }
+
+    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}`;
+
+    const res = await axios.get(url);
+
+    return NextResponse.json(res.data);
   } catch (error) {
     console.log("Error fetching forecast data:", error);
     return new Response("Error fetching forecast data", { status: 500 });

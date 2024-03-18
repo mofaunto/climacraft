@@ -1,13 +1,26 @@
-import { NextResponse, NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest | Request) {
   try {
-    // Type assertion to inform TypeScript that req is always a NextRequest
     const nextReq = req as NextRequest;
 
-    const searchParams = nextReq.nextUrl.searchParams;
-    const lat = searchParams.get("lat");
-    const lon = searchParams.get("lon");
+    let lat = "";
+    let lon = "";
+    if (nextReq instanceof NextRequest) {
+      const searchParams = nextReq.nextUrl.searchParams;
+      lat = searchParams.get("lat") || "";
+      lon = searchParams.get("lon") || "";
+    } else {
+      const queryParams = new URLSearchParams(
+        (nextReq as Request).url.split("?")[1]
+      );
+      lat = queryParams.get("lat") || "";
+      lon = queryParams.get("lon") || "";
+    }
+
+    if (!lat || !lon) {
+      throw new Error("Latitude or longitude not provided in query parameters");
+    }
 
     const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=uv_index_max,uv_index_clear_sky_max&timezone=auto&forecast_days=1`;
 
@@ -19,8 +32,7 @@ export async function GET(req: NextRequest | Request) {
 
     return NextResponse.json(uvData);
   } catch (error) {
-    console.log("Error Getting Uv Data");
-
-    return new Response("Error getting Uv Data", { status: 500 });
+    console.log("Error getting UV data:", error);
+    return new Response("Error getting UV data", { status: 500 });
   }
 }
