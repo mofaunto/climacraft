@@ -52,11 +52,11 @@ function UVIndex() {
   return (
     <div className='pt-6 pb-5 px-4 h-[12rem] border rounded-lg flex flex-col gap-8 dark:bg-dark-grey shadow-sm dark:shadow-none'>
       <div className='top'>
-        <h2 className='flex items-center gap-2 font-medium'>{sun} Uv Index</h2>
-        <div className='pt-4 flex flex-col gap-1'>
+        <h2 className='flex items-center gap-2 font-medium'>{sun}UV Index</h2>
+        <div className='pt-4 flex flex-col'>
           <p className='text-2xl'>
             {uvIndexMax}
-            <span className='text-sm'>
+            <span className='text-sm ml-1'>
               ({uvIndexCategory(uvIndexMax).text})
             </span>
           </p>
@@ -64,7 +64,7 @@ function UVIndex() {
           <UvProgress
             value={marginLeftPercentage}
             max={14}
-            className='progress'
+            className='progress mt-2'
           />
         </div>
       </div>

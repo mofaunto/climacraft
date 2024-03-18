@@ -35,7 +35,7 @@ export const GlobalContextProvider = ({ children }) => {
   // Get Air quality data
   const fetchAirQuality = async (lat, lon) => {
     try {
-      const res = await axios.get(`api/fiveday?lat=${lat}&lon=${lon}`);
+      const res = await axios.get(`api/pollution?lat=${lat}&lon=${lon}`);
       setAirQuality(res.data);
     } catch (error) {
       console.log("Error fetching air quality data: ", error.message);
@@ -46,8 +46,6 @@ export const GlobalContextProvider = ({ children }) => {
   const fetchFiveDayForecast = async (lat, lon) => {
     try {
       const res = await axios.get(`api/fiveday?lat=${lat}&lon=${lon}`);
-
-      console.log("five day forecast data: ", res.data);
       setFiveDayForecast(res.data);
     } catch (error) {
       console.log("Error fetching five day forecast data: ", error.message);
@@ -69,7 +67,7 @@ export const GlobalContextProvider = ({ children }) => {
   const fetchGeoCodedList = async (search) => {
     try {
       const res = await axios.get(`/api/geocoded?search=${search}`);
-
+      console.log("Response from /api/geocoded:", res.data);
       setGeoCodedList(res.data);
     } catch (error) {
       console.log("Error fetching geocoded list: ", error.message);
@@ -81,7 +79,7 @@ export const GlobalContextProvider = ({ children }) => {
     setInputValue(e.target.value);
 
     if (e.target.value === "") {
-      setGeoCodedList(defaultStates);
+      setGeoCodedList(defaultCities);
     }
   };
 

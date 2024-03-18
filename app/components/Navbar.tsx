@@ -11,7 +11,7 @@ const Navbar = () => {
     <div className='w-full flex items-center justify-between py-4'>
       <div className='left'></div>
       <div className='search flex shrink-0 w-full gap-2 sm:w-fit'>
-        <div className='flex items-center gap-2'>
+        <div className='flex w-full items-center gap-2'>
           <Search />
           <ThemeSwitcher />
         </div>

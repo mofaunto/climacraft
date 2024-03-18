@@ -79,7 +79,7 @@ function DailyForecast() {
             </h1>
           </div>
         ) : (
-          <div className='w-full'>
+          <div className='w-full ml-4'>
             <Carousel>
               <CarouselContent>
                 {todaysForecast.map(
@@ -87,7 +87,7 @@ function DailyForecast() {
                     return (
                       <CarouselItem
                         key={forecast.dt_txt}
-                        className='flex flex-col gap-4 basis-[8.5rem] cursor-grab'
+                        className='flex flex-col gap-4 basis-[8rem] cursor-grab'
                       >
                         <p className=' text-gray-300'>
                           {moment(forecast.dt_txt).format("HH:mm")}
